@@ -1,0 +1,24 @@
+# Executable
+doomfisher
+
+# Object files
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# LSP/Editor files
+compile_commands.json
+
+# macOS
+.DS_Store
+
+# Debug files
+*.dSYM/
