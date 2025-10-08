@@ -1,84 +1,145 @@
-  Run these commands in your terminal:
+ # Doomfisher - Project Setup Guide
 
-  # Update package list
-  sudo apt update
+ A 3D first-person camera demo using raylib in C.
 
-  # Install build tools
-  sudo apt install build-essential git cmake
+ ## Prerequisites
 
-  # Install raylib dependencies
-  sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev
-  libxinerama-dev
+ - macOS (this guide is Mac-specific)
+ - Homebrew package manager
+ - Basic terminal knowledge
+ - A text editor (Neovim recommended, but any will work)
 
-  # Install raylib (easiest method)
-  sudo apt install libraylib-dev
+ ## Getting Started
 
-  Step 2: Create your main.c file
+ ### 1. Install Homebrew (if not already installed)
 
-  Create a file called main.c in your current directory and paste the raylib first-person camera example code I showed you
-  earlier.
+ Check if you have Homebrew:bash
+ brew --version
+ If not installed, run:bash
+ /bin/bash -c "$(curl -fsSL
+ https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ ### 2. Install Raylibbash
+ brew install raylib
+ Verify installation location:bash
+ brew --prefix raylib
+ Should output: `/opt/homebrew/opt/raylib`
 
-  Step 3: Create a Makefile
+ ### 3. Install Build Tools
 
-  Create a file called Makefile with this content:
+ Install Bear (for LSP support):bash
+ brew install bear
+ ### 4. Clone the Projectbash
+ git clone <your-repo-url>
+ cd doomfisher
+ ### 5. Download rcamera.h
 
-  CC = gcc
-  CFLAGS = -Wall -Wextra -std=c99
-  LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+ The `rcamera.h` header isn't included in the Homebrew raylib package, so download
+  it:bash
+ curl -o rcamera.h
+ https://raw.githubusercontent.com/raysan5/raylib/master/src/rcamera.h
+ ### 6. Build the Project
 
-  # Default target
-  all: game
+ The project includes a Makefile for easy compilation:bash
+ make
+ ### 7. Run the Demobash
+ make run
+ Or directly:bash
+ ./doomfisher
+ ## Project Structure
+ doomfisher/
+ ├── main.c                  # Main source code
+ ├── rcamera.h              # Camera utility header
+ ├── Makefile               # Build configuration
+ ├── README.md              # This file
+ └── .gitignore            # Git ignore rules
+ ## Makefile Commands
 
-  # Build the game
-  game: main.c
-        $(CC) $(CFLAGS) -o game main.c $(LIBS)
+ - `make` or `make all` - Compile the project
+ - `make run` - Compile and run
+ - `make clean` - Remove build artifacts
+ - `make rebuild` - Clean and rebuild from scratch
+ - `make compile_commands` - Generate LSP compile database
 
-  # Clean build files
-  clean:
-        rm -f game
+ ## Controls (In-Game)
 
-  # Run the game
-  run: game
-        ./game
+ ### Movement
+ - **W, A, S, D** - Move forward, left, backward, right
+ - **Space** - Move up
+ - **Left Ctrl** - Move down
+ - **Arrow keys or Mouse** - Look around
 
-  .PHONY: all clean run
+ ### Camera Modes
+ - **1** - Free camera mode
+ - **2** - First person mode
+ - **3** - Third person mode
+ - **4** - Orbital mode
+ - **P** - Toggle projection (perspective/orthographic)
 
-  Step 4: Test compilation
+ ### Other
+ - **Mouse Scroll** - Zoom in/out
+ - **ESC** - Close window
 
-  Try compiling with:
-  make
+ ## Setting Up LSP (for Neovim/IDE users)
 
-  If that doesn't work, try the direct command:
-  gcc -Wall -Wextra -std=c99 -o game main.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+ If you're using an LSP-enabled editor (Neovim, VSCode, etc.), generate the
+ compile commands database:bash
+ make compile_commands
+ This creates `compile_commands.json` which tells your LSP how to understand the
+ project.
 
-  Step 5: Run your game
+ ### For Neovim Users
 
-  ./game
+ After generating `compile_commands.json`:
+ 1. Open the project in Neovim
+ 2. Restart LSP: `:LspRestart`
+ 3. Check status: `:LspInfo`
 
-  Alternative: Build raylib from source (if package version doesn't work)
+ You should now have:
+ - ✅ Autocomplete for raylib functions
+ - ✅ Go to definition
+ - ✅ No false error warnings
+ - ✅ Hover documentation
 
-  If the package version gives you issues, you can build from source:
+ ## Troubleshooting
 
-  # Clone raylib
-  git clone --depth 1 https://github.com/raysan5/raylib.git raylib-source
-  cd raylib-source/src
+ ### "raylib.h not found" error
 
-  # Build raylib
-  make PLATFORM=PLATFORM_DESKTOP
+ Make sure raylib is installed:bash
+ brew list raylib
+ If installed but still not found, check the include path in the Makefile matches
+ your installation:bash
+ brew --prefix raylib
+ ### "rcamera.h not found" error
 
-  # Install system-wide (optional)
-  sudo make install
+ Download the header manually:bash
+ curl -o rcamera.h
+ https://raw.githubusercontent.com/raysan5/raylib/master/src/rcamera.h
+ ### LSP not working
 
-  # Go back to your project
-  cd ../..
+ Regenerate the compile commands:bash
+ make compilecommands
+ ```
 
-  Then compile with:
-  gcc -Wall -Wextra -std=c99 -o game main.c -L./raylib-source/src -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+ Then restart your editor/LSP.
 
-  Game Controls:
-  - WASD/Arrow Keys: Move camera
-  - Mouse: Look around
-  - 1-4: Switch camera modes
-  - P: Switch between perspective and orthographic
-  - Space/Ctrl: Move up/down
-  - ESC: Exit
+ ### Build artifacts showing in git
+
+ Make sure `.gitignore` is present and contains:
+ ```
+ doomfisher
+ *.o
+ compilecommands.json
+ .DS_Store
+ ## Learning Resources
+
+ - [Raylib Cheatsheet](https://www.raylib.com/cheatsheet/cheatsheet.html)
+ - [Raylib Examples](https://www.raylib.com/examples.html)
+ - [C Programming Documentation](https://en.cppreference.com/w/c)
+
+ ## Contributing
+
+ When adding new features:
+ 1. Write your code
+ 2. Test with `make run`
+ 3. Update this README if needed
+ 4. Commit with clear messages
